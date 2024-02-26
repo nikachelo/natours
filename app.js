@@ -1,4 +1,5 @@
-const exp = require('constants');
+/* eslint-disable prettier/prettier */
+/* eslint-disable node/no-deprecated-api */
 const express = require('express');
 const morgan = require('morgan');
 
@@ -10,10 +11,6 @@ const userRouter = require('./routes/userRoutes');
 // 1) MIDDLEWARES
 app.use(morgan('dev'));
 app.use(express.json());
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  next();
-});
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);

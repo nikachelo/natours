@@ -19,7 +19,7 @@ exports.getAllTours = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(404).json({
       status: 'error',
       message: err.message, // Modify to send only the error message
     });
@@ -44,7 +44,7 @@ exports.getTour = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
+    res.status(404).json({
       status: 'error',
       message: err.message,
     });
@@ -62,7 +62,7 @@ exports.addTour = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(404).json({
       status: 'fail',
       message: err.message, // You can customize the error message as needed
     });
@@ -81,8 +81,8 @@ exports.editTour = async (req, res) => {
       tour: tour,
     });
   } catch (err) {
-    res.status(500).json({
-      status: 'error',
+    res.status(404).json({
+      status: 'fail',
       message: err.message,
     });
   }
@@ -99,6 +99,48 @@ exports.deleteTour = async (req, res) => {
     res.status(500).json({
       status: 'error',
       message: err.message,
+    });
+  }
+};
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: '$difficulty',
+          numTours: { $sum: 1 },
+          numRatings: { $sum: 'ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      tour: stats,
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'error',
+      message: err, // Modify to send only the error message
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    //
+  } catch (err) {
+    res.status(404).json({
+      status: 'error',
+      message: err, // Modify to send only the error message
     });
   }
 };

@@ -15,16 +15,13 @@ const filterObj = function (obj, ...fields) {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    data: {
-      results: users.length,
-      users: users,
-    },
-  });
-});
+exports.getAllUsers = factory.getAll(User);
+
+exports.editUser = factory.updateOne(User);
+
+exports.getUser = factory.getOne(User);
+
+exports.deleteUser = factory.deleteOne(User);
 
 exports.addUser = (req, res) => {
   res
@@ -32,10 +29,9 @@ exports.addUser = (req, res) => {
     .json({ status: 'error', message: 'Route is not defined yet' });
 };
 
-exports.getUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'Route is not defined yet' });
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
@@ -60,7 +56,3 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-exports.editUser = factory.updateOne(User);
-
-exports.deleteUser = factory.deleteOne(User);

@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = function (obj, ...fields) {
   //
@@ -60,14 +61,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.editUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'Route is not defined yet' });
-};
+exports.editUser = factory.updateOne(User);
 
-exports.deleteUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'Route is not defined yet' });
-};
+exports.deleteUser = factory.deleteOne(User);

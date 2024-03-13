@@ -8,6 +8,8 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -21,11 +23,28 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+app.use(cookieParser());
+app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "script-src 'self' https://api.mapbox.com https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js; worker-src blob:;",
+  );
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(helmet());
+// app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
 // 1) MIDDLEWARES
+
 app.use(morgan('dev'));
 app.use(express.json());
 

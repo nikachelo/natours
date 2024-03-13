@@ -23,6 +23,10 @@ const tourSchema = new mongoose.Schema(
         message: 'Difficulty is either: easy, medium, difficult',
       },
     },
+    maxGroupSize: {
+      type: Number,
+      default: 1,
+    },
     ratingsAverage: {
       type: Number,
       default: 5,
@@ -118,7 +122,7 @@ tourSchema.pre('save', function (next) {
 tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'guides',
-    select: 'id name',
+    select: '-__v -passwordChangedAt',
   });
   next();
 });

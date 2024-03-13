@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 const logoutBtn = document.querySelector('.nav__el--logout');
+const loginForm = document.querySelector('.form--login');
 
 const login = async (email, password) => {
   console.log(email, password);
@@ -26,7 +27,6 @@ const login = async (email, password) => {
 };
 
 const logout = async () => {
-  console.log('daechira');
   try {
     const res = await axios({
       method: 'GET',
@@ -43,9 +43,11 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', logout);
 }
 
-document.querySelector('.form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  login(email, password);
-});
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    login(email, password);
+  });
+}

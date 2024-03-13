@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
-    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+    "start:prod": "set NODE_ENV=production&& nodemon server.js",
+    "debug": "ndb server.js"
   },
   "repository": {
     "type": "git",

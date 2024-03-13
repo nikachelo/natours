@@ -1,4 +1,5 @@
 const express = require('express');
+
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 
@@ -15,7 +16,11 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 router.use(authController.protect);
 router.patch('/changePassword', authController.changePassword);
 router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateme', userController.updateMe);
+router.patch(
+  '/updateme',
+  userController.uploadUserPhoto,
+  userController.updateMe,
+);
 
 // Restricted to admins
 

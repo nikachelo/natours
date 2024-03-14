@@ -4,16 +4,13 @@ const formUserData = document.querySelector('.form-user-data');
 const formPassword = document.querySelector('.form-user-settings');
 let labelText;
 
-const updateSettings = async (name, email) => {
+const updateSettings = async (data) => {
   try {
     console.log('daachire');
     const res = await axios({
       method: 'PATCH',
       url: 'http://localhost:3000/api/v1/users/updateme',
-      data: {
-        name,
-        email,
-      },
+      data,
       withCredentials: true,
     });
     if (res.data.status === 'success') {
@@ -61,14 +58,12 @@ const updateLabel = (element, currentText, text, delay = 3000) => {
 if (formUserData) {
   formUserData.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    await updateSettings(name, email);
-    updateLabel(
-      document.querySelector('.settings-button'),
-      'SAVE SETTINGS',
-      labelText,
-    );
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    console.log(form);
+    await updateSettings(form);
   });
 }
 

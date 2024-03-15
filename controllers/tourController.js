@@ -1,8 +1,73 @@
 /* eslint-disable no-undef */
+const multer = require('multer');
+const jimp = require('jimp');
 const Tour = require('../models/tourModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+const fieldsSettings = [
+  {
+    name: 'imageCover',
+    maxCount: 1,
+  },
+  {
+    //
+    name: 'images',
+    maxCount: 3,
+  },
+];
+
+exports.processTourPhotos = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) return next();
+
+  // 1. Image cover processing
+
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}.jpeg`;
+
+  await jimp.read(req.files.imageCover[0].buffer).then((image) => {
+    image
+      .resize(2000, 1333)
+      .quality(70)
+      .write(`public/img/tours/${req.body.imageCover}`);
+  });
+
+  // 2. Tour images processing
+  req.body.images = [];
+
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const fileName = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+      await jimp.read(file.buffer).then((image) => {
+        image
+          .resize(2000, 1333)
+          .quality(80)
+          .write(`public/img/tours/${fileName}`);
+      });
+
+      req.body.images.push(fileName);
+    }),
+  );
+
+  next();
+});
+
+exports.uploadTourPhotos = upload.fields(fieldsSettings);
 
 exports.getAllTours = factory.getAll(Tour);
 
@@ -139,7 +204,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
           coordinates: [lng * 1, lat * 1],
         },
         distanceField: 'distance',
-        distanceMultiplier: multiplierf,
+        distanceMultiplier: multiplier,
       },
     },
     {

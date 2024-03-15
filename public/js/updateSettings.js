@@ -9,7 +9,7 @@ const updateSettings = async (data) => {
     console.log('daachire');
     const res = await axios({
       method: 'PATCH',
-      url: 'http://127.0.0.1:3000/api/v1/users/updateme',
+      url: '/api/v1/users/updateme',
       data,
       withCredentials: true,
     });
@@ -28,7 +28,7 @@ const updatePassword = async (currentPassword, password, passwordConfirm) => {
     console.log('daachire');
     const res = await axios({
       method: 'PATCH',
-      url: 'http://127.0.0.1:3000/api/v1/users/changepassword/',
+      url: '/api/v1/users/changepassword/',
       data: {
         currentPassword,
         password,
